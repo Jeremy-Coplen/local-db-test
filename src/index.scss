@@ -48,6 +48,10 @@ table {
 	border-spacing: 0;
 }
 
+body, html {
+    height: 100%;
+}
+
 * {
 	box-sizing: border-box !important;
 	margin: 0;
