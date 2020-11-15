@@ -1,6 +1,30 @@
 @import "./Styles/mixins.scss";
 
 .app {
-    @include flex(column);
-    height: 50vw;
+    @include flex(column, space-between);
+    height: 100vh;
+    width: 100vw;
+    overflow: auto;
+}
+
+.upload_image_container {
+    @include flex(column, center, center);
+    height: 40vh;
+    img{
+        width: 250px;
+        height: 250px;
+    }
+}
+
+.posted_images {
+    height: 60vh;
+    margin-bottom: 20px;
+    overflow: auto;
+    div {
+        @include flex(column);
+        img {
+            width: 250px;
+            height: 250px;
+        }
+    }
 }

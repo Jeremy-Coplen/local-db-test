@@ -19,9 +19,10 @@ const pool = new Pool({
 
 module.exports = {
     getImages: (req, res) => {
-        pool.query('SELECT * FROM images ORDER BY ASC', (err, results) => {
+        pool.query('SELECT * FROM images ORDER BY id DESC', (err, results) => {
             if(err) {
-                throw err
+                console.log(err)
+                res.sendStatus(500)
             }
 
             res.status(200).send(results.rows)
@@ -39,35 +40,43 @@ module.exports = {
                 res.sendStatus(500)
             }
 
-            // const blobImage = require(`${__dirname}/../Data/Images/${fileName}`)
-
-            // let blob = (typedArray, mimeType) => {
-            //     return URL.createObjectURL(new Blob([typedArray.buffer], {type: mimeType}))
-            // }
-
-            // const url = blob(blobImage, "image/*")
-
-            res.status(200).send(`${REACT_APP_SERVER_HOST}/Data/Images/${fileName}`)
+            res.status(200).send(`${REACT_APP_SERVER_HOST}/${fileName}`)
         })
     },
 
-    saveImages: async (req, res) => {
+    postImage: async (req, res) => {
         try {
-            const { images } = req.body
+            const { img } = req.body
+
+            await pool.query("INSERT INTO images (url) VALUES ($1) RETURNING id;", [img], (err, results) => {
+                if(err) {
+                    console.log(err)
+                    res.sendStatus(500)
+                }
+
+                res.status(201).send(`Image add with id: ${results.rows[0].id}`)
+            })
     
-            let imageIds = []
+            
+            //Potential way to insert multiple images
+
+            // const { images } = req.body
+
+            // let imageIds = []
+
+            // for(let i = 0; i < images.length; i++) {
+            //     await pool.query('INSERT INTO images (url) VALUES ($1)', [images[i]], (err, results) => {
+            //         if(err) {
+            //             console.log(err)
+            //             res.sendStatus(500)
+            //         }
     
-            for(let i = 0; i < images.length; i++) {
-                await pool.query('INSERT INTO images (url) VALUES ($1)', [images[i]], (err, results) => {
-                    if(err) {
-                        throw err
-                    }
+            //         imageIds.push(results.insertId)
+            //     })
+
+            //  res.status(201).send(imageIds)
+            // }
     
-                    imageIds.push(results.insertId)
-                })
-            }
-    
-            res.status(200).send(imageIds)
         }
         catch(err) {
             console.log(err)

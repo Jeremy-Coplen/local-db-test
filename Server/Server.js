@@ -18,7 +18,7 @@ app.use(fileUpload())
 
 app.get("/api/get/images", admin.getImages)
 app.post("/api/add/image", admin.addImage)
-app.post("/api/save/images", admin.saveImages)
+app.post("/api/post/image", admin.postImage)
 
 try {
     app.listen(port, () => console.log(`Listening on port ${port}`))

@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import axios from "axios"
 
+import Image from "./Components/Image/Image"
 import "./App.scss"
 
 class App extends Component {
@@ -8,7 +9,20 @@ class App extends Component {
     super(props)
 
     this.state = {
-      images: []
+      images: [],
+      img: ""
+    }
+  }
+
+  async componentDidMount() {
+    try{
+      let imagesRes = await axios.get("/api/get/images")
+      this.setState({
+        images: imagesRes.data
+      })
+    }
+    catch(err) {
+      console.log(err)
     }
   }
 
@@ -19,7 +33,29 @@ class App extends Component {
       formData.append("myFile", files[0])
   
       let imageRes = await axios.post("/api/add/image", formData)
-      console.log(imageRes.data)
+      this.setState({
+        img: imageRes.data
+      })
+    }
+    catch(err) {
+      console.log(err)
+    }
+  }
+
+  postImage = async () => {
+    try {
+      if(this.state.img === "") {
+        alert("No Image to post")
+        return
+      }
+      let postRes = await axios.post("/api/post/image", {img: this.state.img})
+      await alert(`${postRes.data}`)
+
+      let imagesRes = await axios.get("/api/get/images")
+      this.setState({
+        images: imagesRes.data,
+        img: ""
+      })
     }
     catch(err) {
       console.log(err)
@@ -27,12 +63,30 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.state)
+    let images
+    if(this.state.images.length > 0) {
+      images = this.state.images.map((img, i) => {
+        return (
+          <Image key={i} img={img.url} />
+        )
+      })
+    }
     return (
       <div className="app">
-        <p>Add Images</p>
-        <input type="file" onChange={this.onChange}/>
-        <img src="http://localhost/Data/images/eee1e54294a8cd39e55f9937a484cfc798893c27_full.jpg" alt="upload"/>
-        <button>Post</button>
+        <div></div>
+        <div className="upload_image_container">
+          <p>Add Images</p>
+          <input type="file" onChange={this.onChange}/>
+          <img src={this.state.img} alt="upload"/>
+          <button onClick={this.postImage}>Post</button>
+        </div>
+        <div className="posted_images">
+          <div>
+            <h1>Posted Images</h1>
+            {images}
+          </div>
+        </div>
       </div>
     )
   }
