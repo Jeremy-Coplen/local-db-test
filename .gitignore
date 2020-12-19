@@ -24,4 +24,6 @@ yarn-error.log*
 
 .env
 
-/Server/Data
+/Server/Data/Images/*
+
+!/Server/Data/Images/.gitkeep

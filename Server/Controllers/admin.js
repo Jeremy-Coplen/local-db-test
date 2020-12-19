@@ -30,8 +30,10 @@ module.exports = {
     },
 
     addImage: (req, res) => {
+        console.log("hit")
         const fileName = req.files.myFile.name
         const path = `${__dirname}/../Data/Images/${fileName}`
+        console.log(req.files)
         const image = req.files.myFile
 
         image.mv(path, (err) => {
